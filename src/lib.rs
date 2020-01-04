@@ -37,7 +37,12 @@ pub enum InputSettings {
     rename_all = "camelCase"
 )]
 pub enum Job {
-    Create(RequestJobDescription)
+    Create(RequestJobDescription),
+    File(RequestJobDescription),
+    Reconciliation(RequestJobDescription),
+    Download(RequestJobDescription),
+    Get(RequestJobDescription),
+    Update(RequestJobDescription)
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -120,11 +125,32 @@ impl ExpensifyConnection {
 
     pub fn execute_job(&self, job: Job) -> Response {
 
+        /* This feels wrong. Probably need a refactor somewhere. */
         let job = match job {
             Job::Create(mut jd) => {
                 jd.credentials = self.credentials.clone();
                 Job::Create(jd)
             },
+            Job::File(mut jd) => {
+                jd.credentials = self.credentials.clone();
+                Job::File(jd)
+            },
+            Job::Reconciliation(mut jd) => {
+                jd.credentials = self.credentials.clone();
+                Job::Reconciliation(jd)
+            },
+            Job::Download(mut jd) => {
+                jd.credentials = self.credentials.clone();
+                Job::Download(jd)
+            },
+            Job::Get(mut jd) => {
+                jd.credentials = self.credentials.clone();
+                Job::Get(jd)
+            },
+            Job::Update(mut jd) => {
+                jd.credentials = self.credentials.clone();
+                Job::Update(jd)
+            }
         };
 
         let json = serde_json::to_string_pretty(&job).unwrap();
